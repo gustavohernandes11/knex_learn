@@ -1,30 +1,46 @@
 const knex = require('../config/db')
 
 module.exports = app => {
-    // Implementar funções de save, get, update e delete com validações e tratamento de erros.
     const save = async (req, res) => {
-        const user = { ...req.body }
-        app.db('users')
-            .insert({
-                "name":"gustavo",
-                "email":"g@gmail.com"
-            })
-            .then(res.status(201).send('ok'))
-            .catch(e => res.status(400).send(e))
+        const user = { ...req.body } 
+        if (req.params.id) user.id = req.params.id
 
+        if (user.id) {
+            app.db('users')
+                .update(user)
+                .where({ id: user.id })
+                .then(_ => res.status(204).send("put"))
+                .catch(e => res.status(500).send(e))
+        } else {
+            app.db('users')
+                .insert(user)
+                .then(res.status(204).send('save'))
+                .catch(e => res.status(400).send(e))
+        }
     }
 
 
     const get = async (req, res) => {
         const users = await app.db('users')
-            res.json({ users })
-            .then(users => res.json(users))
-            .then(res.status(201).send('ok'))
+        res.json({ users })
+            .then(res.status(201).send())
             .catch(e => res.status(400).send(e))
-            
+
     }
 
-    return { save, get }
+    const remove = async (req, res) => {
+        const user = { ...req.body }
+        if (user.id) {
+            app.db('users')
+                .where({ id: user.id })
+                .del()
+                .then(res.status(201).send('Deletado'))
+                .catch(e => res.status(400).send(e))
+        }
+
+    }
+
+    return { save, get, remove }
 
 }
 
