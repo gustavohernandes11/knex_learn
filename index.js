@@ -1,10 +1,12 @@
-const knex = require('./config/db')
+const db = require('./config/db')
 const app = require('express')()
 const consign = require('consign')
-knex('users')
+
+app.db = db
 
 consign()
     .include('./api')
+    .then('./config')
     .into(app)
 
 app.listen(3003, () => {

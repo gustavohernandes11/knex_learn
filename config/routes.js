@@ -1,7 +1,9 @@
-const db = require("./db.js"); // importing the db config
+module.exports = app => {
 
-app.get("/", async (req, res) => {
-    const todos = await db("users"); // making a query to get all todos
-    res.json({ todos });
-  });
+  app.route('/user')
+  .get(app.api.users.get)
+  .post(app.api.users.save)
+  .put()
+  .delete()
+}
 
